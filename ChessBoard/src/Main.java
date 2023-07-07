@@ -1,4 +1,3 @@
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,8 +7,9 @@ public class Main {
                 ,{' ',' ',' ',' ',' ',' ',' ',' '},{' ',' ',' ',' ',' ',' ',' ',' '},
                 {' ',' ',' ',' ',' ',' ',' ',' '},{' ',' ',' ',' ',' ',' ',' ',' '}
                 ,{' ',' ',' ',' ',' ',' ',' ',' '}};
-        Board one = new Board();
-        one.displayBoard(chessboard);
+        Board board = new Pawns();
+        board.moves(chessboard);
+
     }
 
 }

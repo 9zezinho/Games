@@ -1,10 +1,5 @@
-public class Board {
-
-//    protected char [][] chessboard = {{' ',' ',' ',' ',' ',' ',' ',' '},
-//            {' ',' ',' ',' ',' ',' ',' ',' '}, {' ',' ',' ',' ',' ',' ',' ',' '}
-//            ,{' ',' ',' ',' ',' ',' ',' ',' '},{' ',' ',' ',' ',' ',' ',' ',' '},
-//            {' ',' ',' ',' ',' ',' ',' ',' '},{' ',' ',' ',' ',' ',' ',' ',' '}
-//            ,{' ',' ',' ',' ',' ',' ',' ',' '}};
+public abstract class  Board {
+    protected char space = ' ';
 
     public Board(){
 
@@ -17,10 +12,16 @@ public class Board {
     public void displayBoard(char[][] chessboard) {
 
         for (int i = 0; i < chessboard.length; i++) {
-            for (int j = 0; j < chessboard[i].length-1; j++) {
+            for (int j = 0; j < chessboard[i].length; j++) {
                 System.out.print(chessboard[i][j] + " | ");
             }
             System.out.println("\n- + - + - + - + - + - + - + -");
         }
     }
+
+    /**
+     * This is the move that this piece of chess can do
+     * @param chessboard is the 8x8 board.
+     */
+    public abstract void moves(char[][] chessboard);
 }
