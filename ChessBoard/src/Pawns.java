@@ -1,18 +1,8 @@
-
-import java.util.Scanner;
-
 public class Pawns extends Board {
+    private final String wPawn = "W-Pawn";
+    private final String bPawn = "B-Pawn";
 
-    protected String wPawn = "W-Pawn";
-    protected String bPawn = "B-Pawn";
-    protected int plyrChoose;
-    protected int plyrMove;
-    int rowMove;
-    int rowChoose;
-    int colChoose;
-    int colMove;
     @Override
-
     public void displayBoard(String[][] chessboard) {
 
         for (int i = 0; i < chessboard.length; i++){
@@ -37,35 +27,12 @@ public class Pawns extends Board {
 
         displayBoard(chessboard);
         do {
-            Scanner in = new Scanner(System.in);
-            do {
-                System.out.println("Please choose the number you want to move:");
-                while(!in.hasNextInt()) {
-                    System.out.println("Error! invalid input");
-                    System.out.println("Please choose the number you want to move:");
-                    in.next();
-                }
-                plyrChoose = in.nextInt();
-                in.nextLine(); // Consume remaining new line character
-
-                System.out.println("Please choose the number where you want to move:");
-                while (!in.hasNextInt()) {
-                    System.out.println("Error! invalid input");
-                    System.out.println("Please choose the number where you want to move:");
-                    in.next();
-                }
-                plyrMove = in.nextInt();
-                in.nextLine();
-                if (plyrChoose > 64 || plyrMove > 64) {
-                    System.out.println("Error! both number shouldn't exceed 64");
-                }
-            } while (plyrChoose > 64 || plyrMove > 64);
-
-            rowChoose = (plyrChoose - 1) / 8;
-            colChoose = (plyrChoose - 1) % 8;
-
-            rowMove = (plyrMove - 1) / 8;
-            colMove = (plyrMove - 1) % 8;
+            //handles the inputs
+            InputHandler handler = InputHandler.movePosition();
+            int rowChoose = handler.getRowChoose();
+            int colChoose = handler.getColChoose();
+            int rowMove = handler.getRowMove();
+            int colMove = handler.getColMove();
 
             String sourcePiece = chessboard[rowChoose][colChoose];
 
@@ -116,6 +83,7 @@ public class Pawns extends Board {
         return false;
     }
     private boolean isValidMoveForBlack(int rowChoose, int colChoose,int rowMove, int colMove) {
+
         if (rowChoose == 6) {
             if(colChoose == colMove) {
 
@@ -135,7 +103,8 @@ public class Pawns extends Board {
             }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
                     && !chessboard[rowMove][colMove].equals(" ");
         }
+
+        //if the pawn reaches to the other side then it can replace with other piece of the board//
         return false;
     }
-
 }
