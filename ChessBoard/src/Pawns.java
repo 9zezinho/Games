@@ -7,7 +7,10 @@ public class Pawns extends Board {
     protected String bPawn = "B-Pawn";
     protected int plyrChoose;
     protected int plyrMove;
-
+    int rowMove;
+    int rowChoose;
+    int colChoose;
+    int colMove;
     @Override
 
     public void displayBoard(String[][] chessboard) {
@@ -30,10 +33,7 @@ public class Pawns extends Board {
     @Override
     public void moves(String[][] chessboard) {
         boolean isWhiteTurn = true; // Flag to track the current player's turn
-        int rowMove;
-        int rowChoose;
-        int colChoose;
-        int colMove;
+
 
         displayBoard(chessboard);
         do {
@@ -57,7 +57,7 @@ public class Pawns extends Board {
                 plyrMove = in.nextInt();
                 in.nextLine();
                 if (plyrChoose > 64 || plyrMove > 64) {
-                    System.out.println("Error! you number shouldn't exceed 64");
+                    System.out.println("Error! both number shouldn't exceed 64");
                 }
             } while (plyrChoose > 64 || plyrMove > 64);
 
@@ -94,24 +94,46 @@ public class Pawns extends Board {
     }
     private boolean isValidMoveForWhite(int rowChoose, int colChoose,
                                         int rowMove, int colMove) {
-        //first white row has the option for the pawn to move two steps.
-        if(rowChoose == 1) {
-            return ((rowMove == rowChoose + 1) || (rowMove == rowChoose + 2))
-                    && colMove == colChoose;
-        }else if (rowChoose > 1) { //only one steps after this.
-            return rowMove == rowChoose + 1 && colMove == colChoose;
-            //change piece if the rowMove moves to the row 7//
+        if (rowChoose == 1) {
+            if(colChoose == colMove) {
+
+                //can move one or two-step from the 1st row
+                return (rowMove == rowChoose + 1 || rowMove == rowChoose + 2)
+                        && chessboard[rowMove][colMove].equals("      ");
+
+                //catch the other player diagonally.
+            }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
+                    && !chessboard[rowMove][colMove].equals(" ");
+        } else if (rowChoose > 1) {
+            if(colChoose == colMove) {
+                return (rowMove == rowChoose + 1)
+                        && chessboard[rowMove][colMove].equals("      ");
+
+                //catch the other player diagonally.
+            }else return (colMove - colChoose == 1) || (colMove - colChoose == -1)
+                    && !chessboard[rowMove][colMove].equals(" ");
         }
         return false;
     }
     private boolean isValidMoveForBlack(int rowChoose, int colChoose,int rowMove, int colMove) {
-        //first black row has the option for the pawn to move two steps.
-        if(rowChoose == 6) {
-            return ((rowMove == rowChoose - 1) || (rowMove == rowChoose - 2))
-                    && colMove == colChoose;
-        }else if (rowChoose < 6) { //only one steps after this.
-            return rowMove == rowChoose + 1 && colMove == colChoose;
-            //change piece if the rowMove moves to the row 0//
+        if (rowChoose == 6) {
+            if(colChoose == colMove) {
+
+                //can move one or two-step from the 1st row
+                return (rowMove == rowChoose - 1 || rowMove == rowChoose - 2)
+                        && chessboard[rowMove][colMove].equals("      ");
+
+                //catch the other player diagonally.
+            }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
+                    && !chessboard[rowMove][colMove].equals(" ");
+        } else if (rowChoose < 6) {
+            if(colChoose == colMove) {
+                return (rowMove == rowChoose - 1)
+                        && chessboard[rowMove][colMove].equals("      ");
+
+                //catch the other player diagonally.
+            }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
+                    && !chessboard[rowMove][colMove].equals(" ");
         }
         return false;
     }
