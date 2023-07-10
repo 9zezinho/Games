@@ -1,10 +1,11 @@
 /**
- * @date: 10/07/2023
+ * Board.java
+ * @date 10/07/2023
  * @author Suresh
  * @version 1.2
  */
 
-public abstract class  Board {
+public class  Board {
     protected final String [][] chessboard =
             {{"      ","      ","      ","      ","      ","      ","      ","      "},
                     {"      ","      ","      ","      ","      ","      ","      ","      "},
@@ -26,8 +27,10 @@ public abstract class  Board {
     String wKing = "W-King";
     String bKing = "B-King";
     String bQueen = "B-Quen";
-    public Board() {
+    private final Pawns pawns;
 
+    public Board() {
+        pawns = new Pawns(this);
     }
 
     /**
@@ -47,6 +50,7 @@ public abstract class  Board {
         }
     }
     public void displayBoardWithPieces(String[][] chessboard) {
+
         for (int i = 0; i < chessboard.length; i++){
             chessboard[1][i] = wPawn;
             chessboard[6][i] = bPawn;
@@ -74,10 +78,43 @@ public abstract class  Board {
         chessboard[7][4] = bQueen;
     }
 
-    /**
-     *
-     * This is the move that this piece of chess can do
-     * @param chessboard is the 8x8 board.
-     */
-    public abstract void moves(String[][] chessboard);
+    public void playGame() {
+        boolean gameOver = false;
+        boolean isValidMove;
+
+        while (!gameOver) {
+            displayBoard(chessboard);
+
+            InputHandler inputHandler = InputHandler.movePosition();
+            int rowChoose = inputHandler.getRowChoose();
+            int colChoose = inputHandler.getColChoose();
+            int rowMove = inputHandler.getRowMove();
+            int colMove = inputHandler.getColMove();
+
+            String sourcePiece = chessboard[rowChoose][colChoose];
+
+            // Check if the chosen piece is a pawn
+            if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
+                if (sourcePiece.equals(wPawn)) {
+                    isValidMove = pawns.isValidMoveForWhite(rowChoose, colChoose, rowMove, colMove);
+                } else {
+                    isValidMove = pawns.isValidMoveForBlack(rowChoose, colChoose, rowMove, colMove);
+                }
+
+                if (isValidMove) {
+                    chessboard[rowChoose][colChoose] = "      ";
+                    chessboard[rowMove][colMove] = sourcePiece;
+                } else {
+                    System.out.println("Invalid move for the pawn");
+                }
+            } else {
+                System.out.println("Invalid move! You can only move pawns");
+            }
+
+            // Example game over condition (checkmate for white) doesn't work for now
+            if (sourcePiece.equals(wKing)) {
+                gameOver = true;
+            }
+        }
+    }
 }
