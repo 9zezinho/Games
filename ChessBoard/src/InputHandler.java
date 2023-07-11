@@ -1,3 +1,10 @@
+/**
+ * InputHandler.java
+ * @date 09/07/2023
+ * @author Suresh
+ * @version 1.0
+ */
+
 import java.util.Scanner;
 public class InputHandler {
     private static final String CHOOSE_NUM =

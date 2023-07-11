@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Board.java
  * @date 10/07/2023
@@ -28,6 +31,8 @@ public class  Board {
     String bKing = "B-King";
     String bQueen = "B-Quen";
     private final Pawns pawns;
+    private boolean isBoardInitialized = false;
+    private boolean isWhiteTurn = true;
 
     public Board() {
         pawns = new Pawns(this);
@@ -36,10 +41,14 @@ public class  Board {
     /**
      *
      * Method to display the chess board.
-     * @param chessboard is the 8x8 grid board.
      */
-    public void displayBoard(String[][] chessboard) {
-        displayBoardWithPieces(chessboard);
+    public void displayBoard() {
+        //using the boolean value to make sure that the
+        //displayBoardWithPieces is called only once at beginning
+        if (!isBoardInitialized) {
+            displayBoardWithPieces();
+            isBoardInitialized = true;
+        }
 
         for (int i = 0; i < chessboard.length; i++) {
             for (int j = 0; j < chessboard[i].length; j++) {
@@ -49,7 +58,7 @@ public class  Board {
                     "+--------+--------+--------+--------");
         }
     }
-    public void displayBoardWithPieces(String[][] chessboard) {
+    public void displayBoardWithPieces() {
 
         for (int i = 0; i < chessboard.length; i++){
             chessboard[1][i] = wPawn;
@@ -81,9 +90,9 @@ public class  Board {
     public void playGame() {
         boolean gameOver = false;
         boolean isValidMove;
+        displayBoard();
 
         while (!gameOver) {
-            displayBoard(chessboard);
 
             InputHandler inputHandler = InputHandler.movePosition();
             int rowChoose = inputHandler.getRowChoose();
@@ -95,26 +104,49 @@ public class  Board {
 
             // Check if the chosen piece is a pawn
             if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
-                if (sourcePiece.equals(wPawn)) {
+                if (sourcePiece.equals(wPawn) && isWhiteTurn) {
                     isValidMove = pawns.isValidMoveForWhite(rowChoose, colChoose, rowMove, colMove);
                 } else {
                     isValidMove = pawns.isValidMoveForBlack(rowChoose, colChoose, rowMove, colMove);
                 }
-
                 if (isValidMove) {
                     chessboard[rowChoose][colChoose] = "      ";
                     chessboard[rowMove][colMove] = sourcePiece;
+                    isWhiteTurn = !isWhiteTurn;
                 } else {
                     System.out.println("Invalid move for the pawn");
+                }
+                displayBoard();
+                if(!isValidMove) {
+                    System.out.println("Please move your piece!");
                 }
             } else {
                 System.out.println("Invalid move! You can only move pawns");
             }
+
 
             // Example game over condition (checkmate for white) doesn't work for now
             if (sourcePiece.equals(wKing)) {
                 gameOver = true;
             }
         }
+    }
+
+    /**
+     *
+     * Method that holds the list of the White pieces
+     *
+     * @return the list to check when catch the opposition
+     * piece
+     */
+    public List<String> stringArray() {
+        List<String> strgList = new ArrayList<>();
+        strgList.add(wBishop);
+        strgList.add(wKing);
+        strgList.add(wKnight);
+        strgList.add(wPawn);
+        strgList.add(wQueen);
+        strgList.add(wRook);
+        return strgList;
     }
 }

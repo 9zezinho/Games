@@ -20,16 +20,21 @@
                             && board.chessboard[rowMove][colMove].equals("      ");
 
                     //catch the other player diagonally.
-                }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
-                        && !board.chessboard[rowMove][colMove].equals(" ");
+                }else if((colMove - colChoose == 1 || colMove - colChoose == -1)
+                        && !board.chessboard[rowMove][colMove].equals(" ")){
+                    return !board.stringArray().contains(board.chessboard[rowMove][colMove]);
+
+                }
             } else if (rowChoose > 1) {
                 if(colChoose == colMove) {
                     return (rowMove == rowChoose + 1)
                             && board.chessboard[rowMove][colMove].equals("      ");
 
                     //catch the other player diagonally.
-                }else return (colMove - colChoose == 1) || (colMove - colChoose == -1)
-                        && !board.chessboard[rowMove][colMove].equals(" ");
+                }else if ((colMove - colChoose == 1) || (colMove - colChoose == -1)
+                        && !board.chessboard[rowMove][colMove].equals(" ")) {
+                    return !board.stringArray().contains(board.chessboard[rowMove][colMove]);
+                };
             }
             return false;
         }
@@ -43,16 +48,21 @@
                             && board.chessboard[rowMove][colMove].equals("      ");
 
                     //catch the other player diagonally.
-                }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
-                        && !board.chessboard[rowMove][colMove].equals(" ");
+                }else if((colMove - colChoose == 1 || colMove - colChoose == -1)
+                        && !board.chessboard[rowMove][colMove].equals(" ")){
+                    return board.stringArray().contains(board.chessboard[rowMove][colMove]);
+
+                }
             } else if (rowChoose < 6) {
                 if(colChoose == colMove) {
                     return (rowMove == rowChoose - 1)
                             && board.chessboard[rowMove][colMove].equals("      ");
 
                     //catch the other player diagonally.
-                }else return (colMove - colChoose == 1 || colMove - colChoose == -1)
-                        && !board.chessboard[rowMove][colMove].equals(" ");
+                }else if((colMove - colChoose == 1 || colMove - colChoose == -1)
+                        && !board.chessboard[rowMove][colMove].equals(" ")){
+                    return board.stringArray().contains(board.chessboard[rowMove][colMove]);
+                }
             }
 
             //if the pawn reaches to the other side then it can replace with other piece of the board//
