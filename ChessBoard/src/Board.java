@@ -31,11 +31,13 @@ public class  Board {
     String bKing = "B-King";
     String bQueen = "B-Quen";
     private final Pawns pawns;
+    private final Bishops bishops;
     private boolean isBoardInitialized = false;
     private boolean isWhiteTurn = true;
 
     public Board() {
         pawns = new Pawns(this);
+        bishops = new Bishops(this);
     }
 
     /**
@@ -89,10 +91,17 @@ public class  Board {
 
     public void playGame() {
         boolean gameOver = false;
-        boolean isValidMove;
+        boolean isValidMove = true;
+        int plyr = 1;
         displayBoard();
 
         while (!gameOver) {
+
+            if (plyr == 1) {
+                System.out.println("Player1:");
+            } else {
+                System.out.println("Player2:");
+            }
 
             InputHandler inputHandler = InputHandler.movePosition();
             int rowChoose = inputHandler.getRowChoose();
@@ -106,23 +115,40 @@ public class  Board {
             if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
                 if (sourcePiece.equals(wPawn) && isWhiteTurn) {
                     isValidMove = pawns.isValidMoveForWhite(rowChoose, colChoose, rowMove, colMove);
-                } else {
+                } else if (sourcePiece.equals(bPawn) && !isWhiteTurn){
                     isValidMove = pawns.isValidMoveForBlack(rowChoose, colChoose, rowMove, colMove);
                 }
-                if (isValidMove) {
-                    chessboard[rowChoose][colChoose] = "      ";
-                    chessboard[rowMove][colMove] = sourcePiece;
-                    isWhiteTurn = !isWhiteTurn;
-                } else {
+                if(!isValidMove) {
                     System.out.println("Invalid move for the pawn");
                 }
-                displayBoard();
-                if(!isValidMove) {
-                    System.out.println("Please move your piece!");
-                }
-            } else {
-                System.out.println("Invalid move! You can only move pawns");
             }
+
+            //Check if the chosen piece is a bishop
+            if(sourcePiece.equals(wBishop) || sourcePiece.equals(bBishop)){
+                if(sourcePiece.equals(wBishop) && isWhiteTurn) {
+                    isValidMove = bishops.isValidMoveForWhite(rowChoose,colChoose,rowMove,colMove);
+                } else if (sourcePiece.equals(bBishop) && !isWhiteTurn) {
+                    isValidMove = bishops.isValidMoveForBlack(rowChoose,colChoose,rowMove,colMove);
+                }
+                if(!isValidMove) {
+                    System.out.println("Invalid move for bishop");
+                }
+            }
+
+            //Moving and switching after validating the piece move
+            if (isValidMove) {
+                chessboard[rowChoose][colChoose] = "      ";
+                chessboard[rowMove][colMove] = sourcePiece;
+                isWhiteTurn = !isWhiteTurn;
+                //swapping player
+                if (plyr == 1) {
+                    plyr += 1;
+                } else if (plyr == 2) {
+                    plyr -= 1;
+                }
+            }
+            displayBoard();
+
 
 
             // Example game over condition (checkmate for white) doesn't work for now
