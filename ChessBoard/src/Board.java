@@ -32,12 +32,14 @@ public class  Board {
     String bQueen = "B-Quen";
     private final Pawns pawns;
     private final Bishops bishops;
+    private final Rook rook;
     private boolean isBoardInitialized = false;
     private boolean isWhiteTurn = true;
 
     public Board() {
         pawns = new Pawns(this);
         bishops = new Bishops(this);
+        rook = new Rook(this);
     }
 
     /**
@@ -93,8 +95,13 @@ public class  Board {
         boolean gameOver = false;
         boolean isValidMove = true;
         int plyr = 1;
-        displayBoard();
+        int colMove;
+        int rowMove;
+        int colChoose;
+        int rowChoose;
+        String sourcePiece;
 
+        displayBoard();
         while (!gameOver) {
 
             if (plyr == 1) {
@@ -102,21 +109,30 @@ public class  Board {
             } else {
                 System.out.println("Player2:");
             }
+            //Make sure that user doesn't choose the empty space.
+            do {
+                InputHandler inputHandler = InputHandler.movePosition();
+                rowChoose = inputHandler.getRowChoose();
+                colChoose = inputHandler.getColChoose();
+                rowMove = inputHandler.getRowMove();
+                colMove = inputHandler.getColMove();
 
-            InputHandler inputHandler = InputHandler.movePosition();
-            int rowChoose = inputHandler.getRowChoose();
-            int colChoose = inputHandler.getColChoose();
-            int rowMove = inputHandler.getRowMove();
-            int colMove = inputHandler.getColMove();
-
-            String sourcePiece = chessboard[rowChoose][colChoose];
+                sourcePiece = chessboard[rowChoose][colChoose];
+                if (chessboard[rowChoose][colChoose].equals
+                        (chessboard[rowMove][colMove])) {
+                    System.out.println("Sorry! " +
+                            "Please choose the box with the piece");
+                }
+            } while(!sourcePiece.equals(" "));
 
             // Check if the chosen piece is a pawn
             if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
                 if (sourcePiece.equals(wPawn) && isWhiteTurn) {
-                    isValidMove = pawns.isValidMoveForWhite(rowChoose, colChoose, rowMove, colMove);
+                    isValidMove = pawns.isValidMoveForWhite(rowChoose,
+                            colChoose, rowMove, colMove);
                 } else if (sourcePiece.equals(bPawn) && !isWhiteTurn){
-                    isValidMove = pawns.isValidMoveForBlack(rowChoose, colChoose, rowMove, colMove);
+                    isValidMove = pawns.isValidMoveForBlack(rowChoose,
+                            colChoose, rowMove, colMove);
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for the pawn");
@@ -126,12 +142,28 @@ public class  Board {
             //Check if the chosen piece is a bishop
             if(sourcePiece.equals(wBishop) || sourcePiece.equals(bBishop)){
                 if(sourcePiece.equals(wBishop) && isWhiteTurn) {
-                    isValidMove = bishops.isValidMoveForWhite(rowChoose,colChoose,rowMove,colMove);
+                    isValidMove = bishops.isValidMoveForWhite(rowChoose,colChoose,
+                            rowMove,colMove);
                 } else if (sourcePiece.equals(bBishop) && !isWhiteTurn) {
-                    isValidMove = bishops.isValidMoveForBlack(rowChoose,colChoose,rowMove,colMove);
+                    isValidMove = bishops.isValidMoveForBlack(rowChoose,colChoose,
+                            rowMove,colMove);
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for bishop");
+                }
+            }
+
+            //Check if the chosen piece is a Rook
+            if(sourcePiece.equals(wRook) || sourcePiece.equals(bRook)) {
+                if(sourcePiece.equals(wRook) && isWhiteTurn) {
+                    isValidMove = rook.isValidMoveForWhite(rowChoose,colChoose,
+                            rowMove,colMove);
+                } else if (sourcePiece.equals(bBishop) && !isWhiteTurn) {
+                    isValidMove = rook.isValidMoveForBlack(rowChoose,colChoose,
+                            rowMove,colMove);
+                }
+                if(!isValidMove) {
+                    System.out.println("Invalid move for Rook");
                 }
             }
 
@@ -148,8 +180,6 @@ public class  Board {
                 }
             }
             displayBoard();
-
-
 
             // Example game over condition (checkmate for white) doesn't work for now
             if (sourcePiece.equals(wKing)) {
