@@ -14,7 +14,7 @@ public class Bishops extends Piece{
     @Override
     public boolean isValidMoveForWhite(int rowChoose, int colChoose,
                                        int rowMove, int colMove) {
-        if(Math.abs(rowChoose - rowMove) == Math.abs(rowChoose - rowMove)){
+        if(Math.abs(rowChoose - rowMove) == Math.abs(colChoose - colMove)){
 
             //Moving diagonally
             int rowDir = (rowMove > rowChoose) ? 1 : -1;
@@ -40,7 +40,7 @@ public class Bishops extends Piece{
     @Override
     public boolean isValidMoveForBlack(int rowChoose, int colChoose,
                                        int rowMove, int colMove) {
-        if(Math.abs(rowChoose - rowMove) == Math.abs(rowChoose - rowMove)){
+        if(Math.abs(rowChoose - rowMove) == Math.abs(colChoose - colMove)){
 
             //Moving diagonally
             int rowDir = (rowMove > rowChoose) ? 1 : -1;
@@ -57,8 +57,14 @@ public class Bishops extends Piece{
                 currentCol += colDir;
             }
             //Catch other player piece diagonally.
-            return !board.chessboard[rowMove][colMove].equals(" ")
-                    &&  board.stringArray().contains(board.chessboard[rowMove][colMove]);
+            if(!board.chessboard[rowMove][colMove].equals(" ")
+                    &&  board.stringArray().contains(board.chessboard[rowMove][colMove])){
+                return true;
+            }
+            //when moving one step for black piece
+            if(currentRow == rowMove && currentCol == colMove) {
+                return board.chessboard[currentRow][currentCol].equals("      ");
+            }
         }
         return false;
     }
