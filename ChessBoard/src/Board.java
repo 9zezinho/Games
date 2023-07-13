@@ -5,7 +5,8 @@ import java.util.List;
  * Board.java
  * @date 10/07/2023
  * @author Suresh
- * @version 1.2
+ * @version 1.3
+ * @since 12/07/2023
  */
 
 public class  Board {
@@ -33,13 +34,16 @@ public class  Board {
     private final Pawns pawns;
     private final Bishops bishops;
     private final Rook rook;
+    private final Knight knight;
     private boolean isBoardInitialized = false;
     private boolean isWhiteTurn = true;
-
+    private final String ERROR_MOVE =
+            "Sorry You are not allowed to move opponent's piece";
     public Board() {
         pawns = new Pawns(this);
         bishops = new Bishops(this);
         rook = new Rook(this);
+        knight = new Knight(this);
     }
 
     /**
@@ -121,9 +125,12 @@ public class  Board {
                 if (chessboard[rowChoose][colChoose].equals
                         (chessboard[rowMove][colMove])) {
                     System.out.println("Sorry! " +
-                            "Please choose the box with the piece");
+                            "Please choose the box with the piece.");
+                    System.out.println("OR - Please choose the different " +
+                            "moving position.");
                 }
-            } while(!sourcePiece.equals(" "));
+            } while(chessboard[rowChoose][colChoose].
+                    equals(chessboard[rowMove][colMove]));
 
             // Check if the chosen piece is a pawn
             if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
@@ -133,6 +140,9 @@ public class  Board {
                 } else if (sourcePiece.equals(bPawn) && !isWhiteTurn){
                     isValidMove = pawns.isValidMoveForBlack(rowChoose,
                             colChoose, rowMove, colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for the pawn");
@@ -147,6 +157,9 @@ public class  Board {
                 } else if (sourcePiece.equals(bBishop) && !isWhiteTurn) {
                     isValidMove = bishops.isValidMoveForBlack(rowChoose,colChoose,
                             rowMove,colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for bishop");
@@ -158,9 +171,12 @@ public class  Board {
                 if(sourcePiece.equals(wRook) && isWhiteTurn) {
                     isValidMove = rook.isValidMoveForWhite(rowChoose,colChoose,
                             rowMove,colMove);
-                } else if (sourcePiece.equals(bBishop) && !isWhiteTurn) {
+                } else if (sourcePiece.equals(bRook) && !isWhiteTurn) {
                     isValidMove = rook.isValidMoveForBlack(rowChoose,colChoose,
                             rowMove,colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for Rook");
