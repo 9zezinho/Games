@@ -6,7 +6,7 @@ import java.util.List;
  * @date 10/07/2023
  * @author Suresh
  * @version 1.3
- * @since 12/07/2023
+ * @since 14/07/2023
  */
 
 public class  Board {
@@ -19,33 +19,36 @@ public class  Board {
                     {"      ","      ","      ","      ","      ","      ","      ","      "},
                     {"      ","      ","      ","      ","      ","      ","      ","      "},
                     {"      ","      ","      ","      ","      ","      ","      ","      "}};
-    String wPawn = "W-Pawn";
-    String bPawn = "B-Pawn";
-    String wBishop = "W-Bisp";
-    String bBishop = "B-Bisp";
-    String wRook = "W-Rook";
-    String bRook = "B-Rook";
-    String wKnight = "W-Kght";
-    String bKnight = "B-Kght";
-    String wQueen = "W-Quen";
-    String wKing = "W-King";
-    String bKing = "B-King";
-    String bQueen = "B-Quen";
     private final Pawns pawns;
     private final Bishops bishops;
     private final Rook rook;
     private final Knight knight;
     private final Queen queen;
-    private boolean isBoardInitialized = false;
-    private boolean isWhiteTurn = true;
+    private final King king;
+    private static final String wPawn = "W-Pawn";
+    private static final String bPawn = "B-Pawn";
+    private static final String wBishop = "W-Bisp";
+    private static final String bBishop = "B-Bisp";
+    private static final String wRook = "W-Rook";
+    private static final String bRook = "B-Rook";
+    private static final String wKnight = "W-Kght";
+    private static final String bKnight = "B-Kght";
+    private static final String wQueen = "W-Quen";
+    private static final String wKing = "W-King";
+    private static final String bKing = "B-King";
+    private static final String bQueen = "B-Quen";
     private static final String ERROR_MOVE =
             "Sorry You are not allowed to move opponent's piece";
+    private boolean isBoardInitialized = false;
+    private boolean isWhiteTurn = true;
+
     public Board() {
         pawns = new Pawns(this);
         bishops = new Bishops(this);
         rook = new Rook(this);
         knight = new Knight(this);
         queen = new Queen(this);
+        king = new King(this);
     }
 
     /**
@@ -219,6 +222,23 @@ public class  Board {
                 }
             }
 
+            //If the chosen piece is King
+            if(sourcePiece.equals(wKing) || sourcePiece.equals(bKing)) {
+                if(sourcePiece.equals(wKing) && isWhiteTurn) {
+                    isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
+                            rowMove,colMove);
+                } else if (sourcePiece.equals(bKing) && !isWhiteTurn) {
+                    isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
+                            rowMove,colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
+                }
+                if(!isValidMove) {
+                    System.out.println("Invalid move for King");
+                }
+            }
+
             //Moving and switching after validating the piece move
             if (isValidMove) {
                 chessboard[rowChoose][colChoose] = "      ";
@@ -234,9 +254,9 @@ public class  Board {
             displayBoard();
 
             // Example game over condition (checkmate for white) doesn't work for now
-            if (sourcePiece.equals(wKing)) {
-                gameOver = true;
-            }
+//            if (sourcePiece.equals(wKing)) {
+//                gameOver = true;
+//            }
         }
     }
 
