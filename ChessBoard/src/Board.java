@@ -35,15 +35,17 @@ public class  Board {
     private final Bishops bishops;
     private final Rook rook;
     private final Knight knight;
+    private final Queen queen;
     private boolean isBoardInitialized = false;
     private boolean isWhiteTurn = true;
-    private final String ERROR_MOVE =
+    private static final String ERROR_MOVE =
             "Sorry You are not allowed to move opponent's piece";
     public Board() {
         pawns = new Pawns(this);
         bishops = new Bishops(this);
         rook = new Rook(this);
         knight = new Knight(this);
+        queen = new Queen(this);
     }
 
     /**
@@ -183,6 +185,40 @@ public class  Board {
                 }
             }
 
+            //Check for the knight piece
+            if (sourcePiece.equals(wKnight) || sourcePiece.equals(bKnight)) {
+                if (sourcePiece.equals(wKnight) && isWhiteTurn) {
+                    isValidMove = knight.isValidMoveForWhite(rowChoose, colChoose,
+                            rowMove, colMove);
+                } else if (sourcePiece.equals(bKnight) && !isWhiteTurn) {
+                    isValidMove = knight.isValidMoveForBlack(rowChoose, colChoose,
+                            rowMove, colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
+                }
+                if (!isValidMove) {
+                    System.out.println("Invalid move for Knight");
+                }
+            }
+
+            //Check if the chosen piece is Queen
+            if (sourcePiece.equals(wQueen) || sourcePiece.equals(bQueen)){
+                if(sourcePiece.equals(wQueen) && isWhiteTurn) {
+                    isValidMove = queen.isValidMoveForWhite(rowChoose,colChoose,
+                            rowMove,colMove);
+                } else if (sourcePiece.equals(bQueen) && !isWhiteTurn) {
+                    isValidMove = queen.isValidMoveForBlack(rowChoose,colChoose,
+                            rowMove,colMove);
+                } else {
+                    System.out.println(ERROR_MOVE);
+                    isValidMove = false;
+                }
+                if(!isValidMove) {
+                    System.out.println("Invalid move for Queen");
+                }
+            }
+
             //Moving and switching after validating the piece move
             if (isValidMove) {
                 chessboard[rowChoose][colChoose] = "      ";
@@ -208,8 +244,7 @@ public class  Board {
      *
      * Method that holds the list of the White pieces
      *
-     * @return the list to check when catch the opposition
-     * piece
+     * @return the list of white pieces
      */
     public List<String> stringArray() {
         List<String> strgList = new ArrayList<>();
