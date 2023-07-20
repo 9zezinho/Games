@@ -109,10 +109,9 @@ public class  Board {
         boolean gameOver = false;
         boolean isValidMove = true;
         int plyr = 1;
-
         String sourcePiece;
-
         displayBoard();
+        
         while (!gameOver) {
 
             if (plyr == 1) {
@@ -223,18 +222,34 @@ public class  Board {
                     System.out.println("Invalid move for Queen");
                 }
             }
-
             //If the chosen piece is King
             if(sourcePiece.equals(wKing) || sourcePiece.equals(bKing)) {
-                if(sourcePiece.equals(wKing) && isWhiteTurn) {
-                    isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
-                            rowMove,colMove);
-                } else if (sourcePiece.equals(bKing) && !isWhiteTurn) {
-                    isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
-                            rowMove,colMove);
+                if(sourcePiece.equals(wKing)) {
+                    //check for the possible move so that king doesn't move to
+                    //opponent marking pos
+                    if(isPosUnderAttack(rowMove,colMove, isWhiteTurn)) {
+                        System.out.println("That place is already" +
+                                " marked!!");
+                        //Reset
+                        chessboard[rowMove][colMove] = "      ";
+                        chessboard[rowChoose][colChoose] = sourcePiece;
+                        isValidMove = false;
+                    } else {
+                        isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
+                                rowMove,colMove);
+                    }
                 } else {
-                    System.out.println(ERROR_MOVE);
-                    isValidMove = false;
+                    if(isPosUnderAttack(rowMove,colMove, !isWhiteTurn)) {
+                        System.out.println("That place is already" +
+                                " marked!!");
+                        //Reset
+                        chessboard[rowMove][colMove] = "      ";
+                        chessboard[rowChoose][colChoose] = sourcePiece;
+                        isValidMove = false;
+                    } else {
+                        isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
+                                rowMove,colMove);
+                    }
                 }
                 if(!isValidMove) {
                     System.out.println("Invalid move for King");
@@ -278,7 +293,6 @@ public class  Board {
                             }
                         } while(chessboard[rowChoose][colChoose].
                                 equals(chessboard[rowMove][colMove]));
-
 
                         // Check if the chosen piece is a pawn
                         if (sourcePiece.equals(wPawn) || sourcePiece.equals(bPawn)) {
@@ -367,15 +381,28 @@ public class  Board {
 
                         //If the chosen piece is King
                         if(sourcePiece.equals(wKing) || sourcePiece.equals(bKing)) {
-                            if(sourcePiece.equals(wKing) && isWhiteTurn) {
-                                isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
-                                        rowMove,colMove);
-                            } else if (sourcePiece.equals(bKing) && !isWhiteTurn) {
-                                isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
-                                        rowMove,colMove);
+                            if(sourcePiece.equals(wKing)) {
+                                if(isPosUnderAttack(rowMove,colMove, isWhiteTurn)) {
+                                    System.out.println("That place is already" +
+                                            " marked!!");
+                                    //Reset
+                                    chessboard[rowMove][colMove] = "      ";
+                                    chessboard[rowChoose][colChoose] = sourcePiece;
+                                } else {
+                                    isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
+                                            rowMove,colMove);
+                                }
                             } else {
-                                System.out.println(ERROR_MOVE);
-                                isValidMove = false;
+                                if(isPosUnderAttack(rowMove,colMove, !isWhiteTurn)) {
+                                    System.out.println("That place is already" +
+                                            " marked!!");
+                                    //Reset
+                                    chessboard[rowMove][colMove] = "      ";
+                                    chessboard[rowChoose][colChoose] = sourcePiece;
+                                } else {
+                                    isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
+                                            rowMove,colMove);
+                                }
                             }
                             if(!isValidMove) {
                                 System.out.println("Invalid move for King");
@@ -383,12 +410,12 @@ public class  Board {
                         }
 
                         if(isValidMove) {
-                            chessboard[rowChoose][colChoose] = "      ";
-                            chessboard[rowMove][colMove] = sourcePiece;
-                            if(!isCheckMate(!isWhiteTurn)) {
-                                System.out.println("King is out of checkmate.");
-                                kingOutOfDanger = true;
-                                break;
+                            if(!isCheckMate(isWhiteTurn)) {
+                                    chessboard[rowChoose][colChoose] = "      ";
+                                    chessboard[rowMove][colMove] = sourcePiece;
+                                    System.out.println("King is out of checkmate.");
+                                    kingOutOfDanger = true;
+                                    break;
                             } else {
                                 System.out.println("Invalid move! Your king " +
                                         "is still in checkmate!");
@@ -397,19 +424,20 @@ public class  Board {
                                 chessboard[rowMove][colMove] = "      ";
                                 chessboard[rowChoose][colChoose] =sourcePiece;
                             }
+                            //swapping player
+                            plyr = (plyr == 1) ? 2 : 1;
+                            isWhiteTurn = !isWhiteTurn;
                         }
-                        plyr = (plyr == 1) ? 2 : 1;
-                        isWhiteTurn = !isWhiteTurn;
+
                     }
                 }
-
                 isWhiteTurn = !isWhiteTurn;
-                //swapping player
                 plyr = (plyr == 1) ? 2 : 1;
             }
             displayBoard();
         }
         System.out.println("Game Over!");
+
     }
 
     /**
@@ -543,112 +571,106 @@ public class  Board {
         return isUnderAttack;
     }
 
-//    /**
-//     *
-//     * Method to check the possible moves to protect the King
-//     *
-//     * @param isWhiteTurn determines the white's or black's turn
-//     * @return boolean value depending on the move
-//     */
-//    public boolean protectKing(boolean isWhiteTurn) {
-//        String kingPos = isWhiteTurn ? bKing : wKing;
-//        int kingRow = 0;
-//        int kingCol = 0;
-//
-//        //king's position
-//        for(int i = 0; i < chessboard.length; i++) {
-//            for (int j = 0; j < chessboard[i].length; j++) {
-//                if(chessboard[i][j].equals(kingPos)) {
-//                    kingRow = i;
-//                    kingCol = j;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        while(!kingOutOfDanger) {
-//            //Check for the possible save for the king
-//            String pawnPiece = isWhiteTurn ? wPawn : bPawn;
-//
-//            for(int i = 0 ; i < chessboard.length; i++) {
-//                for(int j = 0; j < chessboard[i].length; j++) {
-//
-//
-//                    if(chessboard[i][j].equals(pawnPiece)) {
-//                        if(isWhiteTurn){ //check for the pawn validation
-//                            if(pawns.isValidMoveForBlack(i,j,kingRow,kingCol)) {
-//
-//                                return true;
-//                            }
-//                        } else {
-//                            if(pawns.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    String knightPiece = isWhiteTurn ? wKnight : bKnight;
-//                    if(chessboard[i][j].equals(knightPiece)) {
-//                        if(isWhiteTurn){ //check for the knight validation
-//                            if(knight.isValidMoveForBlack(i,j,kingRow ,kingCol)) {
-//                                return true;
-//                            }
-//                        } else {
-//                            if(knight.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    String bishopPiece = isWhiteTurn ? wBishop : bBishop;
-//                    if(chessboard[i][j].equals(bishopPiece)) {
-//                        if(isWhiteTurn){ //check for the bishop validation
-//                            if(bishops.isValidMoveForBlack(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        } else {
-//                            if(bishops.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    String rookPiece = isWhiteTurn ? wRook : bRook;
-//                    if(chessboard[i][j].equals(rookPiece)) {
-//                        if(isWhiteTurn){ //check for the oop validation
-//                            if(rook.isValidMoveForBlack(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        } else {
-//                            if(rook.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    String queenPiece = isWhiteTurn ? wQueen : bQueen;
-//                    if(chessboard[i][j].equals(queenPiece)) {
-//                        if(isWhiteTurn){ //check for the oop validation
-//                            if(queen.isValidMoveForBlack(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        } else {
-//                            if(queen.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                    String kingPiece = isWhiteTurn ? wKing : bKing;
-//                    if(chessboard[i][j].equals(kingPiece)) {
-//                        if(isWhiteTurn){ //check for the oop validation
-//                            if(king.isValidMoveForBlack(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        } else {
-//                            if(king.isValidMoveForWhite(i,j,kingRow,kingCol)) {
-//                                return true;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return false;
-//    }
+
+    /**
+     *
+     * Method that checks for the possible move of
+     * the King after Checkmate
+     */
+    public boolean isPosUnderAttack(int rowMove, int colMove, boolean isWhiteTurn) {
+        boolean kingCannotMove = false;
+        
+        //Check for the possible attack for the king
+        for(int i = 0 ; i < chessboard.length; i++) {
+            for(int j = 0; j < chessboard[i].length; j++) {
+
+                String pawnPiece = isWhiteTurn ? bPawn : wPawn;
+                if(chessboard[i][j].equals(pawnPiece)) {
+                    if(isWhiteTurn){ //check for the pawn validation
+                        if(pawns.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(pawns.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+                String knightPiece = isWhiteTurn ? bKnight : wKnight;
+                if(chessboard[i][j].equals(knightPiece)) {
+                    if(isWhiteTurn){ //check for the knight validation
+                        if(knight.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(knight.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+                String bishopPiece = isWhiteTurn ? bBishop : wBishop;
+                if(chessboard[i][j].equals(bishopPiece)) {
+                    if(isWhiteTurn){ //check for the bishop validation
+                        if(bishops.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(bishops.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+                String rookPiece = isWhiteTurn ? bRook : wRook;
+                if(chessboard[i][j].equals(rookPiece)) {
+                    if(isWhiteTurn){ //check for the oop validation
+                        if(rook.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(rook.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+
+                String queenPiece = isWhiteTurn ? bQueen : wQueen;
+                if(chessboard[i][j].equals(queenPiece)) {
+                    if(isWhiteTurn){ //check for the oop validation
+                        if(queen.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(queen.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+                String kingPiece = isWhiteTurn ? bKing : wKing;
+                if(chessboard[i][j].equals(kingPiece)) {
+                    if(isWhiteTurn){ //check for the oop validation
+                        if(king.isValidMoveForBlack(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    } else {
+                        if(king.isValidMoveForWhite(i,j,rowMove,colMove)) {
+                            kingCannotMove = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return kingCannotMove;
+    }
 }
