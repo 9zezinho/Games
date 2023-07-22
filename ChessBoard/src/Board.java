@@ -109,13 +109,11 @@ public class Board {
     public void playGame() {
         boolean gameOver = false;
         boolean isValidMove = true;
-        boolean kingOutOfDanger = false;
         int plyr = 1;
         String sourcePiece;
         displayBoard();
 
         while (!gameOver) {
-
             if (plyr == 1) {
                 System.out.println("Player1:");
             } else {
@@ -131,11 +129,14 @@ public class Board {
 
                 sourcePiece = chessboard[rowChoose][colChoose];
                 if (chessboard[rowChoose][colChoose].equals
-                        (chessboard[rowMove][colMove])) {
+                        (chessboard[rowMove][colMove])
+                        || chessboard[rowChoose][colChoose]
+                        .equals("      ")) {
                     System.out.println("Sorry! " +
                             "Please choose the box with the piece.");
                     System.out.println("OR - Please choose the different " +
                             "moving position.");
+                    isValidMove = false;
                 }
             } while (chessboard[rowChoose][colChoose].
                     equals(chessboard[rowMove][colMove]));
@@ -226,15 +227,50 @@ public class Board {
             }
             //If the chosen piece is King
             if (sourcePiece.equals(wKing) || sourcePiece.equals(bKing)) {
-                if (sourcePiece.equals(wKing) && isWhiteTurn) {
-                    isValidMove = king.isValidMoveForWhite(rowChoose, colChoose,
-                            rowMove, colMove);
-                } else if (sourcePiece.equals(bKing) && !isWhiteTurn) {
-                    isValidMove = king.isValidMoveForBlack(rowChoose, colChoose,
-                            rowMove, colMove);
+                if (sourcePiece.equals(wKing)) {
+                    if (king.isValidMoveForWhite(rowChoose, colChoose,
+                            rowMove, colMove)) {
+                        if (isPosUnderAttack(rowMove, colMove, isWhiteTurn)) {
+                            if (isThereAnySpace()) {
+                                System.out.println("That place is already" +
+                                        " marked!!");
+                                //Reset
+                                chessboard[rowMove][colMove] = "      ";
+                                chessboard[rowChoose][colChoose] = sourcePiece;
+                                isValidMove = false;
+                            } else {
+                                gameOver = true;
+                                break;
+                            }
+                        } else {
+                            isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
+                                    rowMove,colMove);
+                        }
+                    } else {
+                        isValidMove = false;
+                    }
                 } else {
-                    System.out.println(ERROR_MOVE);
-                    isValidMove = false;
+                    if (king.isValidMoveForBlack(rowChoose, colChoose,
+                            rowMove, colMove)) {
+                        if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
+                            if (isThereAnySpace()) {
+                                System.out.println("That place is already" +
+                                        " marked!!");
+                                //Reset
+                                chessboard[rowMove][colMove] = "      ";
+                                chessboard[rowChoose][colChoose] = sourcePiece;
+                                isValidMove = false;
+                            } else {
+                                gameOver = true;
+                                break;
+                            }
+                        } else {
+                            isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
+                                    rowMove,colMove);
+                        }
+                    } else {
+                        isValidMove = false;
+                    }
                 }
                 if (!isValidMove) {
                     System.out.println("Invalid move for King");
@@ -253,7 +289,7 @@ public class Board {
                     System.out.println(CHECK);
                     System.out.println(plyr + " !! has made a checkmate.");
 
-                    while (!kingOutOfDanger) {
+                    while (true) {
                         plyr = (plyr == 1) ? 2 : 1;
                         if (plyr == 1) {
                             System.out.println("Player1:");
@@ -271,7 +307,9 @@ public class Board {
 
                             sourcePiece = chessboard[rowChoose][colChoose];
                             if (chessboard[rowChoose][colChoose].equals
-                                    (chessboard[rowMove][colMove])) {
+                                    (chessboard[rowMove][colMove])
+                                    || chessboard[rowChoose][colChoose]
+                                    .equals("      ")) {
                                 System.out.println("Sorry! " +
                                         "Please choose the box with the piece.");
                                 System.out.println("OR - Please choose the different " +
@@ -289,7 +327,6 @@ public class Board {
                                 isValidMove = pawns.isValidMoveForBlack(rowChoose,
                                         colChoose, rowMove, colMove);
                             } else {
-                                System.out.println(ERROR_MOVE);
                                 isValidMove = false;
                             }
                             if (!isValidMove) {
@@ -306,7 +343,6 @@ public class Board {
                                 isValidMove = bishops.isValidMoveForBlack(rowChoose, colChoose,
                                         rowMove, colMove);
                             } else {
-                                System.out.println(ERROR_MOVE);
                                 isValidMove = false;
                             }
                             if (!isValidMove) {
@@ -323,7 +359,6 @@ public class Board {
                                 isValidMove = rook.isValidMoveForBlack(rowChoose, colChoose,
                                         rowMove, colMove);
                             } else {
-                                System.out.println(ERROR_MOVE);
                                 isValidMove = false;
                             }
                             if (!isValidMove) {
@@ -340,7 +375,6 @@ public class Board {
                                 isValidMove = knight.isValidMoveForBlack(rowChoose, colChoose,
                                         rowMove, colMove);
                             } else {
-                                System.out.println(ERROR_MOVE);
                                 isValidMove = false;
                             }
                             if (!isValidMove) {
@@ -367,34 +401,6 @@ public class Board {
 
                         //If the chosen piece is King
                         if (sourcePiece.equals(wKing) || sourcePiece.equals(bKing)) {
-//                            if (sourcePiece.equals(wKing)) {
-//                                if (isPosUnderAttack(rowMove, colMove, isWhiteTurn)) {
-//                                    System.out.println("That place is already" +
-//                                            " marked!!");
-//                                    //Reset
-//                                    chessboard[rowMove][colMove] = "      ";
-//                                    chessboard[rowChoose][colChoose] = sourcePiece;
-//                                    isValidMove = false;
-//                                } else {
-//                                    isValidMove = king.isValidMoveForWhite(rowChoose, colChoose,
-//                                            rowMove, colMove);
-//                                }
-//                            } else {
-//                                if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
-//                                    System.out.println("That place is already" +
-//                                            " marked!!");
-//                                    //Reset
-//                                    chessboard[rowMove][colMove] = "      ";
-//                                    chessboard[rowChoose][colChoose] = sourcePiece;
-//                                    isValidMove = false;
-//                                } else {
-//                                    isValidMove = king.isValidMoveForBlack(rowChoose, colChoose,
-//                                            rowMove, colMove);
-//                                }
-//                            }
-//                            if (!isValidMove) {
-//                                System.out.println("Invalid move for King");
-//                            }
                             if (sourcePiece.equals(wKing)) {
                                 if (king.isValidMoveForWhite(rowChoose, colChoose,
                                         rowMove, colMove)) {
@@ -408,21 +414,38 @@ public class Board {
                                             isValidMove = false;
                                         } else {
                                             gameOver = true;
+                                            plyr = (plyr == 1) ? 2 : 1;
                                             break;
                                         }
+                                    } else {
+                                        isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
+                                                rowMove,colMove);
                                     }
-                                }
-                            } else {
-                                if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
-                                    System.out.println("That place is already" +
-                                            " marked!!");
-                                    //Reset
-                                    chessboard[rowMove][colMove] = "      ";
-                                    chessboard[rowChoose][colChoose] = sourcePiece;
-                                    isValidMove = false;
                                 } else {
-                                    isValidMove = king.isValidMoveForBlack(rowChoose, colChoose,
-                                            rowMove, colMove);
+                                    isValidMove = false;
+                                }
+                            } else if (sourcePiece.equals(bKing)) {
+                                if (king.isValidMoveForBlack(rowChoose, colChoose,
+                                        rowMove, colMove)) {
+                                    if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
+                                        if (isThereAnySpace()) {
+                                            System.out.println("That place is already" +
+                                                    " marked!!");
+                                            //Reset
+                                            chessboard[rowMove][colMove] = "      ";
+                                            chessboard[rowChoose][colChoose] = sourcePiece;
+                                            isValidMove = false;
+                                        } else {
+                                            gameOver = true;
+                                            plyr = (plyr == 1) ? 2 : 1;
+                                            break;
+                                        }
+                                    } else {
+                                        isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
+                                                rowMove,colMove);
+                                    }
+                                } else {
+                                    isValidMove = false;
                                 }
                             }
                             if (!isValidMove) {
@@ -435,7 +458,6 @@ public class Board {
                                 chessboard[rowChoose][colChoose] = "      ";
                                 chessboard[rowMove][colMove] = sourcePiece;
                                 System.out.println("King is out of checkmate.");
-                                kingOutOfDanger = true;
                                 break;
                             }
                         } else {
@@ -450,7 +472,6 @@ public class Board {
                         plyr = (plyr == 1) ? 2 : 1;
                         isWhiteTurn = !isWhiteTurn;
                     }
-                    kingOutOfDanger = false;
                 }
                 plyr = (plyr == 1) ? 2 : 1;
             }
@@ -695,89 +716,18 @@ public class Board {
      * Method for the possible moves of the king
      */
     public boolean isThereAnySpace() {
-        if ((rowChoose > 0 && rowChoose < 7) && (colChoose > 0 && colChoose < 7)) {
-            if (chessboard[rowChoose - 1][colChoose - 1].equals("      ")) {
+        //pos around the current cell
+        int [] rowOffSets = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int [] colOffSets = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+        for(int i = 0; i < rowOffSets.length; i++) {
+            int newRow = rowChoose + rowOffSets[i];
+            int newCol = colChoose + colOffSets[i];
+            if(newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8
+                    && chessboard[newRow][newCol].equals("      ")) {
                 return true;
-            } else if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose - 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose + 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose + 1][colChoose].equals("      ");
-        } else if (rowChoose == 0 && (colChoose < 7 && colChoose > 0)) {
-            if (chessboard[rowChoose + 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose - 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose + 1].equals("      ");
-        } else if (rowChoose == 7 && (colChoose < 7) && colChoose > 0) {
-            if (chessboard[rowChoose - 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose - 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose + 1].equals("      ");
-        } else if (colChoose == 0 && (rowChoose < 7 && rowChoose > 0)) {
-            if (chessboard[rowChoose + 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose + 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose + 1][colChoose + 1].equals("      ");
-        } else if (colChoose == 7 && (rowChoose < 7 && rowChoose > 0)) {
-            if (chessboard[rowChoose + 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose][colChoose - 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose + 1][colChoose - 1].equals("      ");
-        } else if (colChoose == 0 && rowChoose == 0) {
-            if (chessboard[rowChoose + 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose + 1].equals("      ");
-        } else if (colChoose == 0 && rowChoose == 7) {
-            if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose + 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose + 1].equals("      ");
-        } else if (colChoose == 7 && rowChoose == 0) {
-            if (chessboard[rowChoose + 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose + 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose - 1].equals("      ");
-        } else if(colChoose == 7 && rowChoose == 7) {
-            if (chessboard[rowChoose - 1][colChoose].equals("      ")) {
-                return true;
-            } else if (chessboard[rowChoose - 1][colChoose - 1].equals("      ")) {
-                return true;
-            } else return chessboard[rowChoose][colChoose - 1].equals("      ");
+            }
         }
-
-
         return false;
     }
 }
