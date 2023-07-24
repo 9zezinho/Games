@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Board.java
@@ -40,7 +42,8 @@ public class Board {
     private static final String bQueen = "B-Quen";
     private static final String ERROR_MOVE =
             "Sorry You are not allowed to move opponent's piece";
-    private static final String CHECK = "Check Mate !!!";
+    private static final String CHECK = "Check !!!";
+    protected String newPiece = " ";
     private boolean isBoardInitialized = false;
     private boolean isWhiteTurn = true;
     int colMove;
@@ -79,10 +82,10 @@ public class Board {
 
     public void displayBoardWithPieces() {
 
-//        for (int i = 0; i < chessboard.length; i++){
-//            chessboard[1][i] = wPawn;
-//            chessboard[6][i] = bPawn;
-//        }
+        for (int i = 0; i < chessboard.length; i++){
+            chessboard[1][i] = wPawn;
+            chessboard[6][i] = bPawn;
+        }
         chessboard[0][2] = wBishop;
         chessboard[0][5] = wBishop;
         chessboard[7][2] = bBishop;
@@ -230,7 +233,7 @@ public class Board {
                 if (sourcePiece.equals(wKing)) {
                     if (king.isValidMoveForWhite(rowChoose, colChoose,
                             rowMove, colMove)) {
-                        if (isPosUnderAttack(rowMove, colMove, isWhiteTurn)) {
+                        if (isPosUnderAttack(rowMove, colMove, true)) {
                             if (isThereAnySpace()) {
                                 System.out.println("That place is already" +
                                         " marked!!");
@@ -238,13 +241,10 @@ public class Board {
                                 chessboard[rowMove][colMove] = "      ";
                                 chessboard[rowChoose][colChoose] = sourcePiece;
                                 isValidMove = false;
-                            } else {
-                                gameOver = true;
-                                break;
                             }
                         } else {
-                            isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
-                                    rowMove,colMove);
+                            isValidMove = king.isValidMoveForWhite(rowChoose, colChoose,
+                                    rowMove, colMove);
                         }
                     } else {
                         isValidMove = false;
@@ -252,7 +252,7 @@ public class Board {
                 } else {
                     if (king.isValidMoveForBlack(rowChoose, colChoose,
                             rowMove, colMove)) {
-                        if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
+                        if (isPosUnderAttack(rowMove, colMove, false)) {
                             if (isThereAnySpace()) {
                                 System.out.println("That place is already" +
                                         " marked!!");
@@ -260,13 +260,10 @@ public class Board {
                                 chessboard[rowMove][colMove] = "      ";
                                 chessboard[rowChoose][colChoose] = sourcePiece;
                                 isValidMove = false;
-                            } else {
-                                gameOver = true;
-                                break;
                             }
                         } else {
-                            isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
-                                    rowMove,colMove);
+                            isValidMove = king.isValidMoveForBlack(rowChoose, colChoose,
+                                    rowMove, colMove);
                         }
                     } else {
                         isValidMove = false;
@@ -276,19 +273,41 @@ public class Board {
                     System.out.println("Invalid move for King");
                 }
             }
-
             //Moving and switching after validating the piece move
             if (isValidMove) {
-                chessboard[rowChoose][colChoose] = "      ";
-                chessboard[rowMove][colMove] = sourcePiece;
+                if(newPiece.equals(" ")) {
+                    chessboard[rowChoose][colChoose] = "      ";
+                    chessboard[rowMove][colMove] = sourcePiece;
+                } else {
+                    chessboard[rowChoose][colChoose] = "      ";
+                    chessboard[rowMove][colMove] = newPiece;
+                }
+                newPiece = " ";
                 isWhiteTurn = !isWhiteTurn;
 
                 //Checkmate conditions
                 if (isCheckMate(isWhiteTurn)) {
                     displayBoard();
                     System.out.println(CHECK);
-                    System.out.println(plyr + " !! has made a checkmate.");
+                    System.out.println(plyr + " !! has made a check.");
 
+//                    String kingPiece = isWhiteTurn ? bKing : wKing;
+//                    for(int i = 0; i < chessboard.length; i++) {
+//                        for(int j = 0; j< chessboard[i].length; j++) {
+//                            if(chessboard[i][j].equals(kingPiece)) {
+//                                rowChoose = i;
+//                                colChoose = j;
+//                            }
+//                        }
+//                    }
+//                    if(isPosUnderAttack(rowMove,colMove,isWhiteTurn)) {
+//                        if(!isThereAnySpace()) {
+//                            System.out.println("heehehe");
+//                            gameOver = true;
+//                            plyr = (plyr == 1) ? 2 : 1;
+//                            break;
+//                        }
+//                    }
                     while (true) {
                         plyr = (plyr == 1) ? 2 : 1;
                         if (plyr == 1) {
@@ -404,7 +423,7 @@ public class Board {
                             if (sourcePiece.equals(wKing)) {
                                 if (king.isValidMoveForWhite(rowChoose, colChoose,
                                         rowMove, colMove)) {
-                                    if (isPosUnderAttack(rowMove, colMove, isWhiteTurn)) {
+                                    if (isPosUnderAttack(rowMove, colMove, true)) {
                                         if (isThereAnySpace()) {
                                             System.out.println("That place is already" +
                                                     " marked!!");
@@ -412,14 +431,10 @@ public class Board {
                                             chessboard[rowMove][colMove] = "      ";
                                             chessboard[rowChoose][colChoose] = sourcePiece;
                                             isValidMove = false;
-                                        } else {
-                                            gameOver = true;
-                                            plyr = (plyr == 1) ? 2 : 1;
-                                            break;
                                         }
                                     } else {
-                                        isValidMove = king.isValidMoveForWhite(rowChoose,colChoose,
-                                                rowMove,colMove);
+                                        isValidMove = king.isValidMoveForWhite(rowChoose, colChoose,
+                                                rowMove, colMove);
                                     }
                                 } else {
                                     isValidMove = false;
@@ -427,7 +442,7 @@ public class Board {
                             } else if (sourcePiece.equals(bKing)) {
                                 if (king.isValidMoveForBlack(rowChoose, colChoose,
                                         rowMove, colMove)) {
-                                    if (isPosUnderAttack(rowMove, colMove, !isWhiteTurn)) {
+                                    if (isPosUnderAttack(rowMove, colMove, false)) {
                                         if (isThereAnySpace()) {
                                             System.out.println("That place is already" +
                                                     " marked!!");
@@ -435,14 +450,10 @@ public class Board {
                                             chessboard[rowMove][colMove] = "      ";
                                             chessboard[rowChoose][colChoose] = sourcePiece;
                                             isValidMove = false;
-                                        } else {
-                                            gameOver = true;
-                                            plyr = (plyr == 1) ? 2 : 1;
-                                            break;
                                         }
                                     } else {
-                                        isValidMove = king.isValidMoveForBlack(rowChoose,colChoose,
-                                                rowMove,colMove);
+                                        isValidMove = king.isValidMoveForBlack(rowChoose, colChoose,
+                                                rowMove, colMove);
                                     }
                                 } else {
                                     isValidMove = false;
@@ -477,8 +488,8 @@ public class Board {
             }
             displayBoard();
         }
-        System.out.println("Game Over!");
-
+        System.out.print("Game Over!");
+        System.out.println(plyr + "Wins");
     }
 
     /**
@@ -517,7 +528,6 @@ public class Board {
             }
         }
 
-        isWhiteTurn = !isWhiteTurn;
         //Check for the possible attack for the king
         for (int i = 0; i < chessboard.length; i++) {
             for (int j = 0; j < chessboard[i].length; j++) {
@@ -617,11 +627,10 @@ public class Board {
      */
     public boolean isPosUnderAttack(int rowMove, int colMove, boolean isWhiteTurn) {
         boolean kingCannotMove = false;
-        isWhiteTurn = !isWhiteTurn;
+
         //Check for the possible attack for the king
         for (int i = 0; i < chessboard.length; i++) {
             for (int j = 0; j < chessboard[i].length; j++) {
-
                 String pawnPiece = isWhiteTurn ? bPawn : wPawn;
                 if (chessboard[i][j].equals(pawnPiece)) {
                     if (isWhiteTurn) { //check for the pawn validation
@@ -717,17 +726,38 @@ public class Board {
      */
     public boolean isThereAnySpace() {
         //pos around the current cell
-        int [] rowOffSets = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int [] colOffSets = {-1, 0, 1, -1, 1, -1, 0, 1};
+        int[] rowOffSets = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] colOffSets = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-        for(int i = 0; i < rowOffSets.length; i++) {
+        for (int i = 0; i < rowOffSets.length; i++) {
             int newRow = rowChoose + rowOffSets[i];
             int newCol = colChoose + colOffSets[i];
-            if(newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8
+            if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8
                     && chessboard[newRow][newCol].equals("      ")) {
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * Method that holds for the piece for pawn when reached the end
+     */
+    public List<String> whitePieces() {
+        List<String> whitePieces = new ArrayList<>();
+        whitePieces.add(wQueen);
+        whitePieces.add(wKnight);
+        whitePieces.add(wBishop);
+        whitePieces.add(wRook);
+        return whitePieces;
+    }
+    public List<String> blackPieces() {
+        List<String> blackPieces = new ArrayList<>();
+        blackPieces.add(bQueen);
+        blackPieces.add(bKnight);
+        blackPieces.add(bBishop);
+        blackPieces.add(bRook);
+        return blackPieces;
+    }
+
 }
