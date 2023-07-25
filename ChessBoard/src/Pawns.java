@@ -1,13 +1,17 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 /**
  * Pawns.java
  *
  * @author Suresh
  * @version 1.0
  * @date 10/07/2023
+ */
+
+import java.util.Scanner;
+
+/**
+ * This class represents the Pawn class, and it moves one step ahead and similarly
+ * catches the opponent players diagonally. And if the selected piece reaches the
+ * other end you can select new piece to add to your side.
  */
 public class Pawns extends Piece {
     private final Scanner in = new Scanner(System.in);
@@ -25,8 +29,9 @@ public class Pawns extends Piece {
                         && board.chessboard[rowMove][colMove].equals("      ");
 
                 //catch the other player diagonally.
-            }else if((colMove - colChoose == 1 || colMove - colChoose == -1)
-                    && !board.chessboard[rowMove][colMove].equals(" ")) {
+            }else if(((colMove - colChoose == 1 || colMove - colChoose == -1)
+                    && rowMove == rowChoose + 1)
+                    && !board.chessboard[rowMove][colMove].equals("      ")) {
                 return !board.stringArray().contains(board.chessboard[rowMove][colMove]);
 
             }
@@ -36,7 +41,8 @@ public class Pawns extends Piece {
                         && board.chessboard[rowMove][colMove].equals("      ");
 
                 //catch the other player diagonally.
-            }else if ((colMove - colChoose == 1) || (colMove - colChoose == -1)
+            }else if (((colMove - colChoose == 1) || (colMove - colChoose == -1)
+                    && rowMove == rowChoose + 1)
                     && !board.chessboard[rowMove][colMove].equals(" ")) {
                 //new Piece
                 if(rowChoose == 6 && rowMove == 7) {
@@ -63,6 +69,9 @@ public class Pawns extends Piece {
     }
 
     public boolean isValidMoveForBlack(int rowChoose, int colChoose, int rowMove, int colMove) {
+        //condition for catching diagonally
+        boolean condition = (colMove - colChoose == 1 || colMove - colChoose == -1)
+                && rowMove == rowChoose - 1;
 
         if (rowChoose == 6) {
             if (colChoose == colMove) {
@@ -72,7 +81,7 @@ public class Pawns extends Piece {
                         && board.chessboard[rowMove][colMove].equals("      ");
 
                 //catch the other player diagonally.
-            } else if ((colMove - colChoose == 1 || colMove - colChoose == -1)
+            } else if (condition
                     && !board.chessboard[rowMove][colMove].equals(" ")) {
                 return board.stringArray().contains(board.chessboard[rowMove][colMove]);
 
@@ -83,7 +92,7 @@ public class Pawns extends Piece {
                         && board.chessboard[rowMove][colMove].equals("      ");
 
                 //catch the other player diagonally.
-            } else if ((colMove - colChoose == 1 || colMove - colChoose == -1)
+            } else if (condition
                     && !board.chessboard[rowMove][colMove].equals(" ")) {
                 //new piece
                 if(rowChoose == 1 && rowMove == 0) {
@@ -106,11 +115,7 @@ public class Pawns extends Piece {
                 return board.stringArray().contains(board.chessboard[rowMove][colMove]);
             }
 
-
-
         }
-
-        //if the pawn reaches to the other side then it can replace with other piece of the board//
         return false;
     }
 }

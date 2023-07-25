@@ -1,8 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
 /**
  * Board.java
  *
@@ -10,6 +5,16 @@ import java.util.Scanner;
  * @version 1.4
  * @date 10/07/2023
  * @since 15/07/2023
+ */
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This class is a main board game where the function of chess game takes place
+ * like swapping player after turn and display of the board as well as keeping track
+ * after each move. All the chess pieces are implementation or valid move is checked
+ * in this class for further movement in the game.
  */
 
 public class Board {
@@ -103,12 +108,15 @@ public class Board {
         chessboard[7][1] = bKnight;
         chessboard[7][6] = bKnight;
 
-        chessboard[0][4] = wQueen;
-        chessboard[0][3] = wKing;
-        chessboard[7][3] = bKing;
-        chessboard[7][4] = bQueen;
+        chessboard[0][3] = wQueen;
+        chessboard[0][4] = wKing;
+        chessboard[7][4] = bKing;
+        chessboard[7][3] = bQueen;
     }
 
+    /**
+     * Method where game is played
+     */
     public void playGame() {
         boolean gameOver = false;
         boolean isValidMove = true;
@@ -283,7 +291,6 @@ public class Board {
                     chessboard[rowMove][colMove] = newPiece;
                 }
                 newPiece = " ";
-                isWhiteTurn = !isWhiteTurn;
 
                 //Checkmate conditions
                 if (isCheckMate(isWhiteTurn)) {
@@ -291,23 +298,23 @@ public class Board {
                     System.out.println(CHECK);
                     System.out.println(plyr + " !! has made a check.");
 
-//                    String kingPiece = isWhiteTurn ? bKing : wKing;
-//                    for(int i = 0; i < chessboard.length; i++) {
-//                        for(int j = 0; j< chessboard[i].length; j++) {
-//                            if(chessboard[i][j].equals(kingPiece)) {
-//                                rowChoose = i;
-//                                colChoose = j;
-//                            }
-//                        }
-//                    }
-//                    if(isPosUnderAttack(rowMove,colMove,isWhiteTurn)) {
-//                        if(!isThereAnySpace()) {
-//                            System.out.println("heehehe");
-//                            gameOver = true;
-//                            plyr = (plyr == 1) ? 2 : 1;
-//                            break;
-//                        }
-//                    }
+                    String kingPiece = (plyr == 1) ? bKing : wKing;
+                    for(int i = 0; i < chessboard.length; i++) {
+                        for(int j = 0; j< chessboard[i].length; j++) {
+                            if(chessboard[i][j].equals(kingPiece)) {
+                                rowChoose = i;
+                                colChoose = j;
+                            }
+                        }
+                    }
+                    if(isPosUnderAttack(rowMove,colMove,isWhiteTurn)) {
+                        if(!isThereAnySpace()) {
+                            System.out.println("heehehe");
+                            gameOver = true;
+                            plyr = (plyr == 1) ? 2 : 1;
+                            break;
+                        }
+                    }
                     while (true) {
                         plyr = (plyr == 1) ? 2 : 1;
                         if (plyr == 1) {
@@ -485,6 +492,7 @@ public class Board {
                     }
                 }
                 plyr = (plyr == 1) ? 2 : 1;
+                isWhiteTurn = !isWhiteTurn;
             }
             displayBoard();
         }
@@ -512,7 +520,7 @@ public class Board {
      * Method that checks for the checkmate
      */
     public boolean isCheckMate(boolean isWhiteTurn) {
-        String kingPos = isWhiteTurn ? wKing : bKing;
+        String kingPos = isWhiteTurn ? bKing : wKing;
         int rowKing = 0;
         int colKing = 0;
         boolean isUnderAttack = false;
@@ -528,6 +536,7 @@ public class Board {
             }
         }
 
+//        isWhiteTurn = !isWhiteTurn;
         //Check for the possible attack for the king
         for (int i = 0; i < chessboard.length; i++) {
             for (int j = 0; j < chessboard[i].length; j++) {
