@@ -16,7 +16,6 @@ import java.util.List;
  * after each move. All the chess pieces are implementation or valid move is checked
  * in this class for further movement in the game. And you use the number to move the
  * pieces in the board
- *
  *   1    |    2   |    3   |    4   |    5   |    6   |    7   |    8   |
  * -------+--------+--------+--------+--------+--------+--------+--------
  *   9    |   10   |   11   |   12   |    13   |   14  |   15  |   16    |
@@ -33,7 +32,6 @@ import java.util.List;
  * -------+--------+--------+--------+--------+--------+--------+--------
  *   57   |   58   |   59   |   60   |   61   |   62   |   63   |   64   |
  * -------+--------+--------+--------+--------+--------+--------+--------
- *
  */
 
 public class Board {
