@@ -1,0 +1,3 @@
+This is an 8x8  grid Chessboard game where players usually take turns to move their piece, choose the piece number, and move to the legal position by selecting
+the number of the position where he wants to move. And this game is based on the 2D array DS.
+
