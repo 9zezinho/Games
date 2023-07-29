@@ -5,6 +5,10 @@
  * @author Suresh
  * @version 1.0
  */
+
+/**
+ * This class represents the movement of the Knight piece in the board.
+ */
 public class Knight extends Piece {
 
     public Knight(Board board) {

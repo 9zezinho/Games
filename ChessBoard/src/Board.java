@@ -87,7 +87,7 @@ public class Board {
 
     public void displayBoardWithPieces() {
 
-        for (int i = 0; i < chessboard.length; i++){
+        for (int i = 0; i < chessboard.length; i++) {
             chessboard[1][i] = wPawn;
             chessboard[6][i] = bPawn;
         }
@@ -115,7 +115,9 @@ public class Board {
     }
 
     /**
-     * Method where game is played
+     * Method where game is played and chess pieces are
+     * moved according to their legal moves. Also checkmate is
+     * checked as well for the King
      */
     public void playGame() {
         boolean gameOver = false;
@@ -124,7 +126,7 @@ public class Board {
         String sourcePiece;
         displayBoard();
 
-        while (!gameOver) {
+        while (true) {
             if (plyr == 1) {
                 System.out.println("Player1:");
             } else {
@@ -283,7 +285,7 @@ public class Board {
             }
             //Moving and switching after validating the piece move
             if (isValidMove) {
-                if(newPiece.equals(" ")) {
+                if (newPiece.equals(" ")) {
                     chessboard[rowChoose][colChoose] = "      ";
                     chessboard[rowMove][colMove] = sourcePiece;
                 } else {
@@ -298,9 +300,9 @@ public class Board {
                     System.out.println(CHECK);
                     System.out.println(plyr + " !! has made a check.");
 
-                    if(!canPieceSaveKing()) {
-                        System.out.println("heehehe");
+                    if (!canPieceCatchAttacker() || !canPieceBlockAttacker()) {
                         gameOver = true;
+                        System.out.println("No possible movements.");
                         plyr = (plyr == 1) ? 2 : 1;
                         break;
                     }
@@ -486,8 +488,9 @@ public class Board {
             }
             displayBoard();
         }
+
         System.out.print("Game Over!");
-        System.out.println(plyr + "Wins");
+        System.out.println(plyr + " -> Wins");
     }
 
     /**
@@ -729,9 +732,9 @@ public class Board {
         int tempKingCol = 0;
         String kingPiece = (isWhiteTurn) ? bKing : wKing;
 
-        for(int i = 0; i < chessboard.length; i++) {
-            for(int j = 0; j< chessboard[i].length; j++) {
-                if(chessboard[i][j].equals(kingPiece)) {
+        for (int i = 0; i < chessboard.length; i++) {
+            for (int j = 0; j < chessboard[i].length; j++) {
+                if (chessboard[i][j].equals(kingPiece)) {
                     tempKingRow = i;
                     tempKingCol = j;
                     break;
@@ -745,9 +748,9 @@ public class Board {
             if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8
                     && chessboard[newRow][newCol].equals("      ")) {
 
-                boolean isKingUnderAttack = isPosUnderAttack(newRow,newCol,false);
+                boolean isKingUnderAttack = isPosUnderAttack(newRow, newCol, false);
 
-                if(!isKingUnderAttack) {
+                if (!isKingUnderAttack) {
                     return true;
                 }
             }
@@ -756,25 +759,11 @@ public class Board {
     }
 
     /**
-     * Method that checks if the piece can catch or block the piece that
+     * Method that checks if the piece can catch the piece that
      * made check on the King
      */
-    private boolean canPieceSaveKing() {
+    private boolean canPieceCatchAttacker() {
         boolean kingCanBeSaved = false;
-        int kingRow = 0;
-        int kingCol = 0;
-
-        String kingPos = (isWhiteTurn) ? bKing : wKing;
-
-        for(int i = 0; i < chessboard.length; i++) {
-            for(int j = 0; j< chessboard[i].length; j++) {
-                if(chessboard[i][j].equals(kingPos)) {
-                    kingRow = i;
-                    kingCol = j;
-                    break;
-                }
-            }
-        }
 
         //Check for the possible attack to the piece that made check
         for (int i = 0; i < chessboard.length; i++) {
@@ -784,11 +773,11 @@ public class Board {
                 if (chessboard[i][j].equals(pawnPiece)) {
                     if (isWhiteTurn) { //check for the pawn validation
                         if (pawns.isValidMoveForBlack(i, j, rowMove, colMove)) {
-                             kingCanBeSaved = true;
+                            kingCanBeSaved = true;
                             break;
                         }
                     } else {
-                        if (pawns.isValidMoveForWhite(i, j,  rowMove, colMove)) {
+                        if (pawns.isValidMoveForWhite(i, j, rowMove, colMove)) {
                             kingCanBeSaved = true;
                             break;
                         }
@@ -797,7 +786,7 @@ public class Board {
                 String knightPiece = isWhiteTurn ? bKnight : wKnight;
                 if (chessboard[i][j].equals(knightPiece)) {
                     if (isWhiteTurn) { //check for the knight validation
-                        if (knight.isValidMoveForBlack(i, j,  rowMove, colMove)) {
+                        if (knight.isValidMoveForBlack(i, j, rowMove, colMove)) {
                             kingCanBeSaved = true;
                             break;
                         }
@@ -817,7 +806,7 @@ public class Board {
                         }
                     } else {
                         if (bishops.isValidMoveForWhite(i, j, rowMove, colMove)) {
-                           kingCanBeSaved = true;
+                            kingCanBeSaved = true;
                             break;
                         }
                     }
@@ -871,75 +860,190 @@ public class Board {
 //        }
         return kingCanBeSaved;
     }
-//    private boolean canPieceBlockAttacker(int rowMove, int colMove, int rowKing, int colKing) {
-//        // Check if the attacker is a rook or queen (horizontal or vertical movement)
-//        if (rowMove == rowKing || colMove == colKing) {
-//            return canBlockHorizontalOrVertical(rowMove, colMove, rowKing, colKing);
-//        }
-//
-//        // Check if the attacker is a bishop or queen (diagonal movement)
-//        if (Math.abs(rowMove - rowKing) == Math.abs(colMove - colKing)) {
-//            return canBlockDiagonal(rowMove, colMove, rowKing, colKing);
-//        }
-//
-//        // If the attacker is neither rook, bishop, nor queen, it cannot be blocked.
-//        return false;
-//    }
 
-//    private boolean canBlockHorizontalOrVertical(int rowMove, int colMove, int rowKing, int colKing) {
-//        int rowStep = Integer.compare(rowMove - rowKing, 0);
-//        int colStep = Integer.compare(colMove - colKing, 0);
-//        int row = rowKing + rowStep;
-//        int col = colKing + colStep;
-//
-//        while (row != rowMove || col != colMove) {
-//            // Check if there's a piece from your side that can block the path
-//            if (isYourPiece(row, col)) {
-//                return true; // A piece can block the horizontal or vertical path
-//            }
-//            row += rowStep;
-//            col += colStep;
-//        }
-//
-//        return false; // No piece can block the path
-//    }
-//
-//    /**
-//     * Method to block diagonal movement
-//     * @param rowMove is the row that you want to move
-//     * @param colMove is the col that you want to move
-//     * @param rowKing is the row of the king
-//     * @param colKing is the col of the king
-//     * @return true if piece can be blocked diagonally
-//     */
-//    private boolean canBlockDiagonal(int rowMove, int colMove, int rowKing, int colKing) {
-//        int rowStep = Integer.compare(rowMove - rowKing, 0);
-//        int colStep = Integer.compare(colMove - colKing, 0);
-//        int row = rowKing + rowStep;
-//        int col = colKing + colStep;
-//
-//        while (row != rowMove && col != colMove) {
-//            // Check if there's a piece from your side that can block the path
-//            if (isYourPiece(row, col)) {
-//                return true; // A piece can block the diagonal path
-//            }
-//            row += rowStep;
-//            col += colStep;
-//        }
-//
-//        return false; // No piece can block the path
-//    }
-//    private boolean isYourPiece(int row, int col) {
-//        String piece = chessboard[row][col];
-//        if (isWhiteTurn) {
-//            // Check if the piece is a white piece (starts with 'W')
-//            return piece.startsWith("W");
-//        } else {
-//            // Check if the piece is a black piece (starts with 'B')
-//            return piece.startsWith("B");
-//        }
-//    }
+    /**
+     * Method that checks if the piece can block the attacker piece
+     * @return true if the piece can block the path
+     */
+    private boolean canPieceBlockAttacker() {
+        int kingRow = 0;
+        int kingCol = 0;
+        rowChoose = rowMove;
+        colChoose = colMove;
 
+        String kingPos = (isWhiteTurn) ? bKing : wKing;
+
+        for (int i = 0; i < chessboard.length; i++) {
+            for (int j = 0; j < chessboard[i].length; j++) {
+                if (chessboard[i][j].equals(kingPos)) {
+                    kingRow = i;
+                    kingCol = j;
+                    break;
+                }
+            }
+        }
+        // Check if the attacker is a rook or queen (horizontal or vertical movement)
+        if (rowChoose == kingRow || colChoose == kingCol) {
+            int rowDir = (kingRow > rowChoose) ? 1 : -1;
+            int colDir = (kingCol > colChoose) ? 1 : -1;
+
+            // Loop through the squares between the attacking piece and the king
+            int currentRow = rowChoose + rowDir;
+            int currentCol = colChoose + colDir;
+            while (currentRow != rowMove || currentCol != colMove) {
+                // Loop through all the black pieces
+                String blackPieceType = (isWhiteTurn) ? "B" : "W";
+                for (int i = 0; i < chessboard.length; i++) {
+                    for (int j = 0; j < chessboard[i].length; j++) {
+                        String piece = chessboard[i][j];
+                        if (piece.startsWith(blackPieceType)) {
+                            // Check if the black piece can move to the current square
+                            switch (piece) {
+                                case bPawn:
+                                    if (pawns.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true; // Black piece can block the check
+                                    }
+                                    break;
+                                case bKnight:
+                                    if (knight.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bQueen:
+                                    if (queen.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bRook:
+                                    if (rook.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bBishop:
+                                    if (bishops.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                            }
+
+                        } else {
+                            switch (piece) {
+                                case wPawn:
+                                    if (pawns.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true; // Black piece can block the check
+                                    }
+                                    break;
+                                case wKnight:
+                                    if (knight.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wQueen:
+                                    if (queen.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wRook:
+                                    if (rook.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wBishop:
+                                    if (bishops.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                            }
+
+                        }
+                    }
+                }
+                currentRow += rowDir;
+                currentCol += colDir;
+            }
+        }
+
+        // Check if the attacker is a bishop or queen (diagonal movement)
+        if (Math.abs(rowChoose - kingRow) == Math.abs(colChoose - kingCol)) {
+            int rowDir = (kingRow > rowChoose) ? 1 : -1;
+            int colDir = (kingCol > colChoose) ? 1 : -1;
+
+            // Loop through the squares between the attacking piece and the king
+            int currentRow = rowChoose + rowDir;
+            int currentCol = colChoose + colDir;
+            while (currentRow != rowMove || currentCol != colMove) {
+                // Loop through all the black pieces
+                String blackPieceType = (isWhiteTurn) ? "B" : "W";
+                for (int i = 0; i < chessboard.length; i++) {
+                    for (int j = 0; j < chessboard[i].length; j++) {
+                        String piece = chessboard[i][j];
+                        if (piece.startsWith(blackPieceType)) {
+                            // Check if the black piece can move to the current square
+                            switch (piece) {
+                                case bPawn:
+                                    if (pawns.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true; // Black piece can block the check
+                                    }
+                                    break;
+                                case bKnight:
+                                    if (knight.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bQueen:
+                                    if (queen.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bRook:
+                                    if (rook.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case bBishop:
+                                    if (bishops.isValidMoveForBlack(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                            }
+                        } else {
+                            switch (piece) {
+                                case wPawn:
+                                    if (pawns.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wKnight:
+                                    if (knight.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wQueen:
+                                    if (queen.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wRook:
+                                    if (rook.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                                case wBishop:
+                                    if (bishops.isValidMoveForWhite(i, j, currentRow, currentCol)) {
+                                        return true;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                currentRow += rowDir;
+                currentCol += colDir;
+            }
+        }
+        // If the attacker is neither rook, bishop, nor queen, it cannot be blocked.
+        return false;
+    }
 
     /**
      * Method that holds for the piece for pawn when reached the end
@@ -952,6 +1056,7 @@ public class Board {
         whitePieces.add(wRook);
         return whitePieces;
     }
+
     public List<String> blackPieces() {
         List<String> blackPieces = new ArrayList<>();
         blackPieces.add(bQueen);

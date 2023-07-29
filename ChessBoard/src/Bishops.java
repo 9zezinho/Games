@@ -6,6 +6,9 @@
  * @version 1.0
  */
 
+/**
+ * This class represents the movement of the Bishop piece in the board
+ */
 public class Bishops extends Piece{
     public Bishops(Board board) {
         super(board);
@@ -24,7 +27,8 @@ public class Bishops extends Piece{
             int currentRow = rowChoose + rowDir;
             int currentCol = colChoose + colDir;
             while(currentRow != rowMove && currentCol != colMove) {
-                if(!board.chessboard[currentRow][currentCol].equals("      ")){
+                if(!board.chessboard[currentRow][currentCol].
+                        equals("      ")){
                     return false;
                 }
                 currentRow += rowDir;
@@ -32,7 +36,8 @@ public class Bishops extends Piece{
             }
             //Catch other player piece diagonally.
             return !board.chessboard[rowMove][colMove].equals(" ")
-                    &&  !board.stringArray().contains(board.chessboard[rowMove][colMove]);
+                    &&  !board.stringArray().
+                    contains(board.chessboard[rowMove][colMove]);
         }
         return false;
     }
@@ -50,7 +55,8 @@ public class Bishops extends Piece{
             int currentRow = rowChoose + rowDir;
             int currentCol = colChoose + colDir;
             while(currentRow != rowMove && currentCol != colMove) {
-                if(!board.chessboard[currentRow][currentCol].equals("      ")){
+                if(!board.chessboard[currentRow][currentCol].
+                        equals("      ")){
                     return false;
                 }
                 currentRow += rowDir;
@@ -58,7 +64,8 @@ public class Bishops extends Piece{
             }
             //Catch other player piece diagonally.
             if(!board.chessboard[rowMove][colMove].equals(" ")
-                    &&  board.stringArray().contains(board.chessboard[rowMove][colMove])){
+                    &&  board.stringArray().
+                    contains(board.chessboard[rowMove][colMove])){
                 return true;
             }
             //when moving one step for black piece

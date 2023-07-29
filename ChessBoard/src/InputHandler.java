@@ -6,6 +6,11 @@
  */
 
 import java.util.Scanner;
+
+/**
+ * This Class is used for taking the input especially the number from the
+ * user
+ */
 public class InputHandler {
     private static final String CHOOSE_NUM =
             "Please choose the number you want to move:";
@@ -32,27 +37,27 @@ public class InputHandler {
         int plyrMove;
 
         do {
+            System.out.println(CHOOSE_NUM);
+            while (!in.hasNextInt()) {
+                System.out.println(ERROR);
                 System.out.println(CHOOSE_NUM);
-                while(!in.hasNextInt()) {
-                    System.out.println(ERROR);
-                    System.out.println(CHOOSE_NUM);
-                    in.next();
-                }
-                plyrChoose = in.nextInt();
-                in.nextLine(); // Consume remaining new line character
+                in.next();
+            }
+            plyrChoose = in.nextInt();
+            in.nextLine(); // Consume remaining new line character
 
+            System.out.println(MOVE_NUM);
+            while (!in.hasNextInt()) {
+                System.out.println(ERROR);
                 System.out.println(MOVE_NUM);
-                while (!in.hasNextInt()) {
-                    System.out.println(ERROR);
-                    System.out.println(MOVE_NUM);
-                    in.next();
-                }
-                plyrMove = in.nextInt();
-                in.nextLine();
-                if (plyrChoose > 64 || plyrMove > 64) {
-                    System.out.println("Error! Both number shouldn't exceed 64");
-                }
-            } while (plyrChoose > 64 || plyrMove > 64);
+                in.next();
+            }
+            plyrMove = in.nextInt();
+            in.nextLine();
+            if (plyrChoose > 64 || plyrMove > 64) {
+                System.out.println("Error! Both number shouldn't exceed 64");
+            }
+        } while (plyrChoose > 64 || plyrMove > 64);
 
         rowChoose = (plyrChoose - 1) / 8;
         colChoose = (plyrChoose - 1) % 8;

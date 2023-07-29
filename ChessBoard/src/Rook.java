@@ -6,6 +6,10 @@
  * @version 1.0
  */
 
+/**
+ * This class Rook.java represents the rook piece and its movements i.e.
+ * horizontally or vertically.
+ */
 public class Rook extends Piece{
     public Rook(Board board) {
         super(board);

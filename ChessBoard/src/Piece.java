@@ -6,6 +6,10 @@
  * @version 1.0
  */
 
+/**
+ * This is an abstract class that has its abstract method to be implemented by
+ * the specific piece the way piece wants to implement.
+ */
 public abstract class  Piece{
     Board board;
     public Piece(Board board){

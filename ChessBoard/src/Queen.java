@@ -6,6 +6,9 @@
  * @version 1.0
  */
 
+/**
+ * This class defines the movement of the Queen Piece.
+ */
 public class Queen extends Piece {
     public Queen(Board board) {
         super(board);
@@ -103,6 +106,5 @@ public class Queen extends Piece {
             }
         }
         return false;
-
     }
 }

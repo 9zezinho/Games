@@ -5,6 +5,10 @@
  * @version 1.0
  * @date 14/07/2023
  */
+
+/**
+ * This class King.java defines the movement of King piece in the board
+ */
 public class King extends Piece {
     public King(Board board) {
         super(board);
